@@ -79,7 +79,7 @@ function renderResultCard(row) {
   const seat = readField(row, "رقم الجلوس", "SeatNumber", "Seat");
   const name = readField(row, "اسم الطالب", "الاسم", "Name", "StudentName");
   const cls = readField(row, "الصف", "Grade", "Class");
-  const totalKeys = ["مجموع المواد الاساسية", "Total"];
+  const totalKeys = ["المجموع", "Total"];
 
   const subjectEntries = Object.entries(row).filter(([k, v]) => !identityKeys.includes(k) && !totalKeys.includes(k) && v !== "");
   const total = readField(row, ...totalKeys);
