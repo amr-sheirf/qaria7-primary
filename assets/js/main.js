@@ -104,7 +104,7 @@ function renderFooter() {
             <span>تصميم مستر عمرو شريف</span>
             <span>|</span>
             <span dir="ltr">📞 01008560950</span>
-            <img src="assets/img/amr-logo.png" style="height: 25px; width: auto; border-radius: 4px;">
+            <img src="assets/img/amr-logo.png" style="height: 45px; width: auto; border-radius: 4px;">
           </div>
         </div>
     </footer>
