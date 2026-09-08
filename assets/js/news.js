@@ -2,8 +2,25 @@
 
 function parseFlexibleDate(value) {
   if (!value) return null;
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? null : d;
+  
+  let dateStr = String(value).trim();
+  let date = null;
+
+  // محاولة صيغة YYYY/MM/DD أو YYYY-MM-DD
+  if (/^\d{4}[/-]\d{1,2}[/-]\d{1,2}$/.test(dateStr)) {
+    date = new Date(dateStr.replace(/\//g, '-'));
+  }
+  // محاولة صيغة DD/MM/YYYY
+  else if (/^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.test(dateStr)) {
+    const parts = dateStr.split(/[/-]/);
+    date = new Date(parts[2], parts[1] - 1, parts[0]);
+  }
+  // محاولة صيغة افتراضية
+  else {
+    date = new Date(dateStr);
+  }
+
+  return isNaN(date.getTime()) ? null : date;
 }
 
 function fixEncoding(str) {
@@ -94,8 +111,8 @@ function renderNewsCard(item, index) {
   const shortSummary = summary.length > 90 ? summary.substring(0, 90) + "..." : summary;
 
   return `
-    <article class="news-card" style="background:#fff; border-radius:10px; border:1px solid #e0e0e0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : `<div style="height:120px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#aaa;">📷 لا توجد صورة</div>`}
+    <article class="news-card" style="background:#fff; border-radius:10px; border:1px solid #e0e0e0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : `<div style="height:120px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#aaa;">صورة غير متاحة</div>`}
       
       <div style="padding:15px; display:flex; flex-direction:column; flex-grow:1;">
         ${date ? `<span style="font-size:0.8rem; color:#6c757d; margin-bottom:6px;">📅 ${escapeHtml(date)}</span>` : ""}
@@ -114,8 +131,8 @@ function injectNewsModal() {
   if (document.getElementById("newsModalOverlay")) return;
 
   const modalHTML = `
-    <div id="newsModalOverlay" onclick="closeNewsModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; padding:15px; backdrop-filter:blur(3px);">
-      <div style="background:#fff; width:100%; max-width:650px; max-height:85vh; border-radius:12px; overflow-y:auto; position:relative; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); text-align:right;" onclick="event.stopPropagation()">
+    <div id="newsModalOverlay" onclick="closeNewsModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center;">
+      <div style="background:#fff; width:100%; max-width:650px; max-height:85vh; border-radius:12px; overflow-y:auto; position:relative; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); text-align:right;">
         
         <button onclick="closeNewsModal()" style="position:absolute; top:12px; left:15px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:#777;">&times;</button>
         
