@@ -6,56 +6,44 @@ function parseFlexibleDate(value) {
 }
 
 async function loadNews() {
+  const stateEl = document.getElementById("newsState");
+  const featureEl = document.getElementById("newsFeature");
+  const gridEl = document.getElementById("newsGrid");
+
+  setState(stateEl, "loading", "جارٍ تحميل الأخبار ...");
+
   try {
-    // 1. جلب الملف كـ Blob للتحكم في الترميز والتشفير
-    const response = await fetch(CONFIG.SHEETS_CSV.NEWS);
-    const blob = await response.blob();
-    
-    // 2. قراءة الملف بواسطة FileReader بترميز UTF-8 لدعم اللغة العربية
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-      const csvText = e.target.result;
-      
-      // 3. تحليل CSV باستخدام PapaParse مع تفعيل الخيارات الصحيحة
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        transformHeader: function(h) {
-          // تنظيف عناوين الأعمدة من أي مسافات أو رموز مخفية
-          return h.trim().replace(/^[\uFEFF\xA0]+|[\uFEFF\xA0]+$/g, '');
-        },
-        complete: function(results) {
-          const rows = results.data;
-          
-          if (!rows || rows.length === 0) {
-            showNoNewsMessage();
-            return;
-          }
-          
-          // تصفية الأخبار والتأكد من وجود عنوان
-          const validNews = rows.filter(item => {
-            const title = item["العنوان"] || item["title"];
-            return title && title.trim() !== "";
-          });
+    let items = await fetchSheetCSV(CONFIG.SHEETS_CSV.NEWS);
 
-          if (validNews.length === 0) {
-            showNoNewsMessage();
-          } else {
-            renderNews(validNews); // دالة عرض الأخبار في صفحتك
-          }
-        }
-      });
-    };
-    
-    // قراءة الملف بترميز UTF-8 الصريح
-    reader.readAsText(blob, 'UTF-8');
+    // استبعاد الصفوف الفارغة، وترتيب الأحدث أولًا إن وُجد عمود تاريخ
+    items = items.filter(i => i.العنوان || i.Title);
+    items.sort((a, b) => {
+      const da = parseFlexibleDate(a.التاريخ || a.Date);
+      const db = parseFlexibleDate(b.التاريخ || b.Date);
+      if (da && db) return db - da;
+      return 0;
+    });
 
-  } catch (error) {
-    console.error("خطأ في قراءة الأخبار:", error);
-    showNoNewsMessage();
+    if (items.length === 0) {
+      setState(stateEl, "info", "لا توجد أخبار منشورة حاليًا. تابعونا قريبًا.");
+      return;
+    }
+
+    stateEl.innerHTML = "";
+
+    const [first, ...rest] = items;
+    featureEl.innerHTML = renderFeature(first);
+    gridEl.innerHTML = rest.map(renderCard).join("");
+
+  } catch (err) {
+    if (err.message === "CONFIG_NOT_SET") {
+      setState(stateEl, "error", "لم يتم ربط شيت الأخبار بعد. الرجاء إضافة الرابط في ملف assets/js/config.js (راجع README).");
+    } else {
+      setState(stateEl, "error", "تعذّر تحميل الأخبار حاليًا، الرجاء المحاولة لاحقًا.");
+    }
   }
 }
+
 function renderFeature(item) {
   const title = readField(item, "العنوان", "Title");
   const image = readField(item, "الصورة", "Image");
