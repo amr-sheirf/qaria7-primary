@@ -99,7 +99,7 @@ function renderResultCard(row) {
           <tbody>
             <tr>${subjectEntries.map(([, v]) => `<td>${escapeHtml(v)}</td>`).join("")}</tr>
           </tbody>
-          ${total ? `<tfoot><tr><td colspan="${subjectEntries.length}">المجموع الكلي: ${escapeHtml(total)}</td></tr></tfoot>` : ""}
+          ${total ? `<tfoot><tr><td colspan="${subjectEntries.length}">مجموع المواد الاساسية: ${escapeHtml(total)}</td></tr></tfoot>` : ""}
         </table>
       </div>
     </div>
