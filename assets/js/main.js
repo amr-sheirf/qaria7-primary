@@ -77,7 +77,7 @@ function renderFooter() {
             <p style="margin-top: 8px; font-size: 0.95em; line-height: 1.6;">
               ${escapeHtml(s.name)} إحدى مدارس ${escapeHtml(s.department)} التابعة لـ${escapeHtml(s.ministry)}.
             </p>
-            <div style="text-align: center; margin-top: 6px; font-size: 1em; line-height: 1;">
+            <div style="text-align: center; margin-top: 6px; font-size: 1em; line-height: 1.5;">
               <strong>وكيلة المدرسة:</strong><br>
               هدى ابوزيد هجرس<br><br>
               <strong>مديرة المدرسة:</strong><br>
