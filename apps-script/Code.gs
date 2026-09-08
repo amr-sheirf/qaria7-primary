@@ -3,14 +3,7 @@
     -----------------------------------------------------------
     هذا الكود يُنسخ داخل محرر Apps Script المرتبط بملف جوجل
     شيت الخاص بالمدرسة (Extensions > Apps Script)، ثم يُنشر
-    كـ "Web App" (تطبيق ويب). راجع README.md للخطوات كاملة.
-
-    أسماء التبويبات (الشيتات) المتوقعة داخل ملف جوجل شيت:
-      - News      (الأخبار)
-      - Results   (نتائج الطلاب)
-      - Absence   (غياب الطلاب)
-      - Gallery   (معرض الصور)
-      - Requests  (طلبات وشكاوى أولياء الأمور)
+    كـ "Web App" (تطبيق ويب).
     ========================================================= */
 
 // ⚠️ يجب أن تطابق هذه القيمة تمامًا القيمة الموجودة في
@@ -19,8 +12,8 @@ const ADMIN_PASSWORD = "admin0100";
 
 const SHEET_NAMES = {
   NEWS: "News",
-  RESULTS: "Results",
-  ABSENCE: "Absence",
+  RESULTS: "Results",   // شيت نتائج وبيانات الطلاب
+  ABSENCE: "Absence",   // شيت غياب الطلاب
   GALLERY: "Gallery",
   REQUESTS: "Requests",
   SETTINGS: "Settings"
@@ -46,8 +39,7 @@ function checkPassword_(pwd) {
 }
 
 /* -------------------- طلبات القراءة (GET) --------------------
-   تُستخدم فقط من لوحة التحكم لعرض قوائم قابلة للحذف/التعديل
-   (مثل قائمة طلبات أولياء الأمور)، وتتطلب كلمة المرور. */
+   تُستخدم فقط من لوحة التحكم لعرض قوائم قابلة للحذف/التعديل، وتتطلب كلمة المرور. */
 function doGet(e) {
   try {
     const action = e.parameter.action;
@@ -75,7 +67,7 @@ function doGet(e) {
 
     const headers = values[0];
     const rows = values.slice(1).map((row, idx) => {
-      const obj = { _row: idx + 2 }; // رقم الصف الحقيقي داخل الشيت (بعد رأس الجدول)
+      const obj = { _row: idx + 2 }; // رقم الصف الحقيقي داخل الشيت
       headers.forEach((h, i) => { obj[h] = row[i]; });
       return obj;
     }).reverse(); // الأحدث أولًا
@@ -94,18 +86,35 @@ function doPost(e) {
     const action = payload.action;
 
     switch (action) {
-      case "addRequest":     return handleAddRequest_(payload);
-      case "addNews":        return handleAdminWrite_(payload, addNews_);
-      case "addGalleryImage":return handleAdminWrite_(payload, addGalleryImage_);
-      case "updateStats":    return handleAdminWrite_(payload, updateStats_);
-      case "deleteRow":      return handleAdminWrite_(payload, deleteRow_);
-      case "updateStatus":   return handleAdminWrite_(payload, updateStatus_);
+      case "addRequest":      return handleAddRequest_(payload);
+      case "addStudent":      return handleAdminWrite_(payload, addStudent_);
+      case "addNews":         return handleAdminWrite_(payload, addNews_);
+      case "addGalleryImage": return handleAdminWrite_(payload, addGalleryImage_);
+      case "updateStats":     return handleAdminWrite_(payload, updateStats_);
+      case "deleteRow":       return handleAdminWrite_(payload, deleteRow_);
+      case "updateStatus":    return handleAdminWrite_(payload, updateStatus_);
       default:
         return jsonOut_({ ok: false, message: "إجراء غير معروف" });
     }
   } catch (err) {
     return jsonOut_({ ok: false, message: "خطأ في الخادم: " + err.message });
   }
+}
+
+/* --- إضافة طالب جديد في شيت Results --- */
+function addStudent_(payload) {
+  const sheet = getSheet_(SHEET_NAMES.RESULTS);
+  ensureHeader_(sheet, ["ID", "كود الطالب", "اسم الطالب", "الصف", "الفصل", "النتيجة", "تاريخ الإضافة"]);
+  sheet.appendRow([
+    Utilities.getUuid(),
+    payload.studentCode || payload.code || "",
+    payload.name || payload.studentName || "",
+    payload.grade || payload.classNum || "",
+    payload.section || payload.classSection || "",
+    payload.result || payload.score || "",
+    new Date().toLocaleDateString("ar-EG")
+  ]);
+  return jsonOut_({ ok: true, message: "تم حفظ بيانات الطالب بنجاح" });
 }
 
 /* --- طلب ولي أمر: عام، لا يحتاج كلمة مرور --- */
