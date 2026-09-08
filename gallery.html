@@ -3,9 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>معرض الصور | مدرسة قرية 7 الابتدائية</title>
+<title>طباعة صحيفة أحوال المعلم | مدرسة قرية 7 الابتدائية</title>
 <link rel="icon" href="assets/img/logo.png">
 <link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .print-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  .search-container {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .search-container h1 {
+    text-align: center;
+    color: var(--primary-700);
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-700);
+    font-weight: 500;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    direction: ltr;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  }
+
+  .btn-search {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-600);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-search:hover {
+    background: var(--primary-700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+  }
+
+  .btn-search:active {
+    transform: translateY(0);
+  }
+
+  .message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    display: none;
+  }
+
+  .message.loading {
+    display: block;
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+  }
+
+  .message.success {
+    display: block;
+    background: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #c8e6c9;
+  }
+
+  .message.error {
+    display: block;
+    background: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+  }
+
+  .instruction {
+    background: var(--gray-100);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 30px;
+    border-right: 4px solid var(--primary-500);
+  }
+
+  .instruction h3 {
+    color: var(--primary-700);
+    margin-bottom: 10px;
+  }
+
+  .instruction p {
+    color: var(--text-700);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 5px;
+  }
+
+  @media print {
+    body {
+      background: white;
+    }
+    .search-container,
+    .instruction {
+      display: none;
+    }
+  }
+</style>
 </head>
 <body>
 
@@ -14,24 +150,41 @@
 <section class="section">
   <div class="container">
     <div class="section-head">
-      
       <div>
-        <h2>معرض صور المدرسة</h2>
-        <p class="sub">لقطات من المدرسة، الفعاليات، والحفلات المدرسية</p>
+        <h2>🖨️ طباعة صحيفة أحوال المعلم</h2>
+        <p class="sub">ابحث عن الملف برقم الكود المكون من 7 أرقام</p>
       </div>
-      
     </div>
 
-    <div class="gallery-filters" id="galleryFilters"></div>
-    <div id="galleryState"></div>
-    <div class="gallery-grid" id="galleryGrid"></div>
+    <div class="search-container" style="margin: 0 auto;">
+      <form id="searchForm">
+        <div class="form-group">
+          <label for="codeInput">أدخل الكود (7 أرقام):</label>
+          <input 
+            type="text" 
+            id="codeInput" 
+            inputmode="numeric"
+            placeholder="مثال: 1234567"
+            maxlength="7"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn-search">🔍 بحث عن الملف</button>
+      </form>
+
+      <div id="galleryState"></div>
+      <div id="message" class="message"></div>
+
+      <div class="instruction">
+        <h3>📌 تعليمات الاستخدام:</h3>
+        <p>• أدخل رقم الكود المكون من 7 أرقام</p>
+        <p>• اضغط على زر البحث</p>
+        <p>• سيتم فتح الملف جاهزاً للطباعة أو التحميل</p>
+      </div>
+    </div>
   </div>
 </section>
-
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose" aria-label="إغلاق">&times;</button>
-  <img id="lightboxImg" src="" alt="">
-</div>
 
 <div id="site-footer"></div>
 
