@@ -53,8 +53,8 @@ function runAbsenceSearch() {
     return;
   }
 
-  if (!grade && !name) {
-    setState(stateEl, "error", "الرجاء اختيار الصف الدراسي أو كتابة اسم الطالب على الأقل.");
+  if (!grade || !name) {
+    setState(stateEl, "error", "الرجاء اختيار الصف الدراسي و كتابة اسم الطالب.");
     return;
   }
 
