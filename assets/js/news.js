@@ -64,10 +64,7 @@ async function loadNews() {
 
     if (stateEl) stateEl.innerHTML = "";
 
-    // حفظ البيانات وصولاً إليها عبر المعرف (Index)
     window.allNewsItems = items;
-
-    // تجهيز حاوية النافذة المنبثقة إن لم تكن موجودة بالصفحة
     injectNewsModal();
 
     if (gridEl) {
@@ -91,10 +88,9 @@ async function loadNews() {
 function renderNewsCard(item, index) {
   const title = readField(item, "العنوان", "Title");
   const image = readField(item, "الصورة", "Image");
-  const summary = readField(item, "الملخص", "الوصف", "Summary", "التفاصيل");
+  const summary = readField(item, "التفاصيل", "الوصف", "الملخص", "Details", "Summary");
   const date = readField(item, "التاريخ", "Date");
 
-  // اقتطاع النص للملخص
   const shortSummary = summary.length > 90 ? summary.substring(0, 90) + "..." : summary;
 
   return `
@@ -106,7 +102,7 @@ function renderNewsCard(item, index) {
         <h3 style="font-size:1.1rem; margin-bottom:10px; color:#2c3e50; font-weight:bold; line-height:1.4;">${escapeHtml(title)}</h3>
         <p style="font-size:0.9rem; color:#555; line-height:1.5; flex-grow:1; margin-bottom:15px;">${escapeHtml(shortSummary)}</p>
         
-        <button onclick="openNewsModal(${index})" style="background:#0d6efd; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:0.88rem; align-self:flex-start; transition: background 0.2s;">
+        <button onclick="openNewsModal(${index})" style="background:#0d6efd; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:0.88rem; align-self:flex-start;">
           اقرأ المزيد ⬅
         </button>
       </div>
@@ -114,7 +110,6 @@ function renderNewsCard(item, index) {
   `;
 }
 
-// إنشاء هيكل النافذة المنبثقة تلقائياً في الصفحة
 function injectNewsModal() {
   if (document.getElementById("newsModalOverlay")) return;
 
@@ -140,19 +135,41 @@ function injectNewsModal() {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
-// فتح النافذة المنبثقة للخبر
+// فتح النافذة المنبثقة وعرض الوصف/التفاصيل بالكامل
 window.openNewsModal = function(index) {
   const item = window.allNewsItems[index];
   if (!item) return;
 
   const title = readField(item, "العنوان", "Title");
   const image = readField(item, "الصورة", "Image");
-  const details = readField(item, "التفاصيل", "Details", "الملخص", "Summary", "الوصف");
-  const date = readField(item, "التاريخ", "Date");
+  
+  // البحث عن النص في أكثر من مسمى محتمل لاسم العمود
+  let details = readField(item, "التفاصيل", "الوصف", "الملخص", "Details", "Summary", "Description");
+  
+  // في حال لم يجد أي مفتاح، يجلب أول نص طويل موجود في الكائن
+  if (!details) {
+    const keys = Object.keys(item);
+    for (const key of keys) {
+      if (key !== "العنوان" && key !== "Title" && key !== "التاريخ" && key !== "Date" && key !== "الصورة" && key !== "Image") {
+        if (item[key] && item[key].length > 0) {
+          details = item[key];
+          break;
+        }
+      }
+    }
+  }
 
   document.getElementById("modalNewsTitle").textContent = title;
-  document.getElementById("modalNewsDate").textContent = date ? `📅 ${date}` : "";
-  document.getElementById("modalNewsBody").textContent = details;
+  document.getElementById("modalNewsDate").textContent = readField(item, "التاريخ", "Date") ? `📅 ${readField(item, "التاريخ", "Date")}` : "";
+  
+  // تنسيق الأسطر المكسورة وإظهار النص كاملاً
+  const formattedText = escapeHtml(details)
+    .split('\n')
+    .filter(p => p.trim() !== "")
+    .map(p => `<p style="margin-bottom:10px;">${p}</p>`)
+    .join("");
+
+  document.getElementById("modalNewsBody").innerHTML = formattedText || "<p class='text-muted'>لا توجد تفاصيل إضافية لهذا الخبر.</p>";
 
   const imgContainer = document.getElementById("modalNewsImageContainer");
   if (image) {
@@ -162,10 +179,9 @@ window.openNewsModal = function(index) {
   }
 
   const overlay = document.getElementById("newsModalOverlay");
-  overlay.style.display = "flex";
+  if (overlay) overlay.style.display = "flex";
 };
 
-// إغلاق النافذة المنبثقة
 window.closeNewsModal = function(e) {
   const overlay = document.getElementById("newsModalOverlay");
   if (overlay) overlay.style.display = "none";
