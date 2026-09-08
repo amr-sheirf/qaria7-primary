@@ -23,17 +23,18 @@ const PDF_CONFIG = {
 };
 
 function initGalleryPage() {
-  // Set up the PDF-code search UI. Use clear element IDs for integration.
+  // Set up the PDF-code search UI with improved styling
   const stateEl = document.getElementById('pdfState');
   if (stateEl) stateEl.innerHTML = '';
 
   const container = document.getElementById('pdfSearchContainer');
   if (!container) return; // nothing to do if container missing
 
+  container.classList.add('pdf-search-container');
   container.innerHTML = `
     <div class="pdf-search-row">
       <input id="pdfCodeInput" class="pdf-input" type="text" placeholder="أدخل كود المعلم" aria-label="كود المعلم">
-      <button id="pdfSearchBtn" class="pdf-btn">بحث</button>
+      <button id="pdfSearchBtn" class="pdf-btn">🔍 بحث</button>
     </div>
   `;
 
