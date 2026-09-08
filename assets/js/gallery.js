@@ -1,32 +1,56 @@
-/* معرض الصور */
+/* معرض الصور - تبسيط لصفحة طباعة PDF: حقل إدخال للكود وزر بحث */
 
 let GALLERY_CACHE = [];
 
 async function initGalleryPage() {
+  // هذه الصفحة مخصصة لطباعة PDF — لا نحتاج لتحميل صور أو رسائل حالة.
   const stateEl = document.getElementById("galleryState");
-  setState(stateEl, "loading", "جارٍ تحميل الصور ...");
+  if (stateEl) stateEl.innerHTML = "";
 
-  try {
-    GALLERY_CACHE = await fetchSheetCSV(CONFIG.SHEETS_CSV.GALLERY);
-    GALLERY_CACHE = GALLERY_CACHE.filter(i => readField(i, "الصورة", "Image"));
+  const filtersEl = document.getElementById("galleryFilters");
+  if (!filtersEl) return;
 
-    if (GALLERY_CACHE.length === 0) {
-      setState(stateEl, "info", "لا توجد صور مضافة حتى الآن.");
-      return;
+  // واجهة بسيطة: حقل نصي أنيق وزر بحث
+  filtersEl.innerHTML = `
+    <div class="gallery-search-row">
+      <input id="galleryCodeInput" class="gallery-input" type="text" placeholder="أدخل الكود هنا" aria-label="كود">
+      <button id="gallerySearchBtn" class="gallery-btn">بحث</button>
+    </div>
+  `;
+
+  const gridEl = document.getElementById("galleryGrid");
+  if (gridEl) gridEl.innerHTML = ""; // نترك المساحة فارغة لعرض النتيجة
+
+  const input = document.getElementById("galleryCodeInput");
+  const btn = document.getElementById("gallerySearchBtn");
+
+  // عند البحث نظهر الكود بشكل جمالي داخل المساحة المخصصة
+  btn.addEventListener("click", () => {
+    const code = input.value.trim();
+    renderCodeResult(code);
+  });
+
+  input.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      const code = input.value.trim();
+      renderCodeResult(code);
     }
+  });
+}
 
-    stateEl.innerHTML = "";
-    buildFilters();
-    renderGallery("الكل");
-    initLightbox();
-
-  } catch (err) {
-    if (err.message === "CONFIG_NOT_SET") {
-      setState(stateEl, "error", "لم يتم ربط شيت معرض الصور بعد. الرجاء إضافة الرابط في ملف assets/js/config.js.");
-    } else {
-      setState(stateEl, "error", "تعذّر تحميل الصور حاليًا.");
-    }
+function renderCodeResult(code) {
+  const gridEl = document.getElementById("galleryGrid");
+  if (!gridEl) return;
+  if (!code) {
+    gridEl.innerHTML = `<div class="gallery-note">الرجاء إدخال الكود ثم الضغط على \"بحث\".</div>`;
+    return;
   }
+  gridEl.innerHTML = `
+    <div class="gallery-code-display">
+      <label>الكود:</label>
+      <div class="code-box">${escapeHtml(code)}</div>
+    </div>
+  `;
 }
 
 function buildFilters() {
