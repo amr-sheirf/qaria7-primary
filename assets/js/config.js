@@ -11,10 +11,10 @@ const CONFIG = {
     welcome: "البوابة الإلكترونية لمدرسة قرية 7 الابتدائية ترحب بكم ..",
     name: "مدرسة قرية 7 الابتدائية",
     address: "قرية 7 - مركز الحامول - محافظة كفر الشيخ",
-    phone: "0470000000",
-    whatsapp: "201000000000",   /* بصيغة دولية بدون + أو أصفار في البداية */
-    facebook: "https://facebook.com/",
-    email: "info@example.com"
+    phone: "01064111573",
+    whatsapp: "01064111573",   /* بصيغة دولية بدون + أو أصفار في البداية */
+    facebook: "https://www.facebook.com/profile.php?id=100057514125075",
+    email: "amr.sherif934@gmail.com"
   },
 
   /* روابط قراءة البيانات (CSV) من جوجل شيت */
