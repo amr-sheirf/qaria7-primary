@@ -38,7 +38,7 @@ const CONFIG = {
      يُستخدم في: إرسال طلبات/شكاوى أولياء الأمور، وجميع
      عمليات لوحة التحكم (إضافة/تعديل/حذف).
      ----------------------------------------------------- */
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzBbCdyf8vPWbRSdwgVQYNvNC3ldAtAJLxqah0xzvHQPgG4HNbeHS8v5LHh5yMS3jztpQ/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzdwBB_HCX_C8Z9LkvdwaJtEIRF8rjrph7FfaFdkDJQjvbNyRSVGM1ZtFuI1JF6uDcsTg/exec",
 
   /* رابط ملف جوجل شيت نفسه (وضع التعديل) — يُستخدم في لوحة
      التحكم لفتح الملف مباشرة عند استيراد نتائج/غياب الطلاب */
