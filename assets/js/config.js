@@ -26,10 +26,10 @@ const CONFIG = {
   },
 
   /* رابط تطبيق ويب Google Apps Script (Code.gs) */
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzdwBB_HCX_C8Z9LkvdwaJtEIRF8rjrph7FfaFdkDJQjvbNyRSVGM1ZtFuI1JF6uDcsTg/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwsJe-9ZhPAvWLI3qMCA5kkDG4UcvdL6kyFa73ONK6qnBqfRBIqf_3WDjOm4C9lLekj2A/exec",
 
   /* رابط ملف جوجل شيت المباشر (وضع التعديل) */
-  SPREADSHEET_EDIT_URL: "https://docs.google.com/spreadsheets/d/1GZ6M7bDi36s4MgdUk26XF1vfU_pOO0YJTMDTE7Ty6rM/edit",
+  SPREADSHEET_EDIT_URL: "https://docs.google.com/spreadsheets/d/1GZ6M7bDi36s4MgdUk26XF1vfU_pOO0YJTMDTE7Ty6rM/edit?gid=625050410#gid=625050410",
 
   /* كلمة مرور لوحة التحكم */
   ADMIN_PASSWORD: "admin0100"
