@@ -1,4 +1,4 @@
-/* تحميل وعرض الأخبار على الصفحة الرئيسية بنظام "الفلوج والمدونات" */
+/* تحميل وعرض الأخبار بنظام البطاقات مع نافذة منبثقة (Modal) للتفاصيل */
 
 function parseFlexibleDate(value) {
   if (!value) return null;
@@ -6,7 +6,6 @@ function parseFlexibleDate(value) {
   return isNaN(d.getTime()) ? null : d;
 }
 
-// دالة لمعالجة وتصحيح ترميز اللغة العربية المكسور
 function fixEncoding(str) {
   if (typeof str !== 'string' || !str) return str || '';
   try {
@@ -16,7 +15,6 @@ function fixEncoding(str) {
   }
 }
 
-// دالة لتنظيف مفاتيح وقيم الكائن القادم من fetchSheetCSV
 function normalizeItem(rawItem) {
   const cleanObj = {};
   if (!rawItem || typeof rawItem !== 'object') return cleanObj;
@@ -31,6 +29,9 @@ function normalizeItem(rawItem) {
   return cleanObj;
 }
 
+// مصفوفة عامة لحفظ الأخبار لفتحها عند الضغط على البطاقة
+window.allNewsItems = [];
+
 async function loadNews() {
   const stateEl = document.getElementById("newsState");
   const featureEl = document.getElementById("newsFeature");
@@ -40,21 +41,15 @@ async function loadNews() {
 
   try {
     let rawItems = await fetchSheetCSV(CONFIG.SHEETS_CSV.NEWS);
+    if (!Array.isArray(rawItems)) rawItems = [];
 
-    if (!Array.isArray(rawItems)) {
-      rawItems = [];
-    }
-
-    // إصلاح التشفير وتنظيف بيانات الأخبار
     let items = rawItems.map(normalizeItem);
 
-    // استبعاد الصفوف الفارغة أو التي لا تحتوي على عنوان
     items = items.filter(i => {
       const title = readField(i, "العنوان", "Title");
       return title && String(title).trim() !== "";
     });
 
-    // ترتيب الأخبار بحسب التاريخ (الأحدث أولًا)
     items.sort((a, b) => {
       const da = parseFlexibleDate(readField(a, "التاريخ", "Date"));
       const db = parseFlexibleDate(readField(b, "التاريخ", "Date"));
@@ -69,68 +64,109 @@ async function loadNews() {
 
     if (stateEl) stateEl.innerHTML = "";
 
-    // عرض جميع الأخبار بنمط التدوينة / الفلوج الكامل
-    const newsHTML = items.map(renderVlogPost).join("");
+    // حفظ البيانات وصولاً إليها عبر المعرف (Index)
+    window.allNewsItems = items;
 
-    if (featureEl) {
-      featureEl.innerHTML = newsHTML;
-      if (gridEl) gridEl.innerHTML = "";
-    } else if (gridEl) {
-      gridEl.innerHTML = newsHTML;
+    // تجهيز حاوية النافذة المنبثقة إن لم تكن موجودة بالصفحة
+    injectNewsModal();
+
+    if (gridEl) {
+      gridEl.innerHTML = items.map((item, index) => renderNewsCard(item, index)).join("");
+      if (featureEl) featureEl.innerHTML = "";
+    } else if (featureEl) {
+      featureEl.innerHTML = items.map((item, index) => renderNewsCard(item, index)).join("");
     }
 
   } catch (err) {
     console.error("خطأ أثناء تحميل الأخبار:", err);
-
     if (err.message === "CONFIG_NOT_SET") {
-      if (stateEl) setState(stateEl, "error", "لم يتم ربط شيت الأخبار بعد. الرجاء إضافة الرابط في ملف assets/js/config.js.");
+      if (stateEl) setState(stateEl, "error", "لم يتم ربط شيت الأخبار بعد. الرجاء إضافة الرابط في assets/js/config.js.");
     } else {
       if (stateEl) setState(stateEl, "error", "تعذّر تحميل الأخبار حاليًا، الرجاء المحاولة لاحقًا.");
     }
   }
 }
 
-/* تصميم الخبر بنظام الفلوج (عنوان -> تاريخ -> صورة -> تفاصيل النص) */
-function renderVlogPost(item) {
+// رسم الكارت الصغير
+function renderNewsCard(item, index) {
+  const title = readField(item, "العنوان", "Title");
+  const image = readField(item, "الصورة", "Image");
+  const summary = readField(item, "الملخص", "الوصف", "Summary", "التفاصيل");
+  const date = readField(item, "التاريخ", "Date");
+
+  // اقتطاع النص للملخص
+  const shortSummary = summary.length > 90 ? summary.substring(0, 90) + "..." : summary;
+
+  return `
+    <article class="news-card" style="background:#fff; border-radius:10px; border:1px solid #e0e0e0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : `<div style="height:120px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#aaa;">📷 لا توجد صورة</div>`}
+      
+      <div style="padding:15px; display:flex; flex-direction:column; flex-grow:1;">
+        ${date ? `<span style="font-size:0.8rem; color:#6c757d; margin-bottom:6px;">📅 ${escapeHtml(date)}</span>` : ""}
+        <h3 style="font-size:1.1rem; margin-bottom:10px; color:#2c3e50; font-weight:bold; line-height:1.4;">${escapeHtml(title)}</h3>
+        <p style="font-size:0.9rem; color:#555; line-height:1.5; flex-grow:1; margin-bottom:15px;">${escapeHtml(shortSummary)}</p>
+        
+        <button onclick="openNewsModal(${index})" style="background:#0d6efd; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:0.88rem; align-self:flex-start; transition: background 0.2s;">
+          اقرأ المزيد ⬅
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+// إنشاء هيكل النافذة المنبثقة تلقائياً في الصفحة
+function injectNewsModal() {
+  if (document.getElementById("newsModalOverlay")) return;
+
+  const modalHTML = `
+    <div id="newsModalOverlay" onclick="closeNewsModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; padding:15px; backdrop-filter:blur(3px);">
+      <div style="background:#fff; width:100%; max-width:650px; max-height:85vh; border-radius:12px; overflow-y:auto; position:relative; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); text-align:right;" onclick="event.stopPropagation()">
+        
+        <button onclick="closeNewsModal()" style="position:absolute; top:12px; left:15px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:#777;">&times;</button>
+        
+        <div id="modalNewsDate" style="font-size:0.85rem; color:#6c757d; margin-bottom:8px;"></div>
+        <h2 id="modalNewsTitle" style="color:#0d6efd; font-size:1.4rem; margin-bottom:15px; line-height:1.4;"></h2>
+        
+        <div id="modalNewsImageContainer" style="margin-bottom:15px; text-align:center;"></div>
+        
+        <div id="modalNewsBody" style="line-height:1.8; color:#333; font-size:1rem; white-space:pre-line;"></div>
+        
+        <div style="margin-top:20px; text-align:left;">
+          <button onclick="closeNewsModal()" style="background:#6c757d; color:#fff; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+}
+
+// فتح النافذة المنبثقة للخبر
+window.openNewsModal = function(index) {
+  const item = window.allNewsItems[index];
+  if (!item) return;
+
   const title = readField(item, "العنوان", "Title");
   const image = readField(item, "الصورة", "Image");
   const details = readField(item, "التفاصيل", "Details", "الملخص", "Summary", "الوصف");
   const date = readField(item, "التاريخ", "Date");
 
-  // تقسيم الأسطر الجديدة لفقرات منسقة
-  const formattedDetails = escapeHtml(details)
-    .split('\n')
-    .filter(p => p.trim() !== "")
-    .map(p => `<p style="margin-bottom: 12px; font-size: 1.05rem; line-height: 1.8; color: #333;">${p}</p>`)
-    .join("");
+  document.getElementById("modalNewsTitle").textContent = title;
+  document.getElementById("modalNewsDate").textContent = date ? `📅 ${date}` : "";
+  document.getElementById("modalNewsBody").textContent = details;
 
-  return `
-    <article class="vlog-post" style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e9ecef;">
-      
-      <!-- 1. العنوان -->
-      <h2 style="color: #0d6efd; font-size: 1.6rem; font-weight: 700; margin-bottom: 8px;">
-        ${escapeHtml(title)}
-      </h2>
+  const imgContainer = document.getElementById("modalNewsImageContainer");
+  if (image) {
+    imgContainer.innerHTML = `<img src="${escapeHtml(image)}" style="max-width:100%; max-height:350px; border-radius:8px; object-fit:cover;">`;
+  } else {
+    imgContainer.innerHTML = "";
+  }
 
-      <!-- 2. التاريخ -->
-      ${date ? `
-        <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 16px;">
-          📅 <span>${escapeHtml(date)}</span>
-        </div>
-      ` : ""}
+  const overlay = document.getElementById("newsModalOverlay");
+  overlay.style.display = "flex";
+};
 
-      <!-- 3. الصورة -->
-      ${image ? `
-        <div style="margin-bottom: 20px; text-align: center; overflow: hidden; border-radius: 8px;">
-          <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="max-width: 100%; height: auto; max-height: 480px; object-fit: cover; border-radius: 8px;">
-        </div>
-      ` : ""}
-
-      <!-- 4. التفاصيل والنص -->
-      <div class="vlog-body">
-        ${formattedDetails}
-      </div>
-
-    </article>
-  `;
-}
+// إغلاق النافذة المنبثقة
+window.closeNewsModal = function(e) {
+  const overlay = document.getElementById("newsModalOverlay");
+  if (overlay) overlay.style.display = "none";
+};
