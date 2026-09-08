@@ -74,13 +74,15 @@ function renderFooter() {
         <div class="footer-grid">
          <div>
             <h4>عن المدرسة</h4>
-            <p style="margin-top: 8px; font-size: 1em; line-height: 1.6; text-align: center;">
-              ${escapeHtml(s.name)} إحدى مدارس ${escapeHtml(s.department)} التابعة لـ${escapeHtml(s.ministry)}.<br><br>
-              <strong>وكيلة المدرسة</strong><br>
-              هدى ابوزيد هجرس<br><br>
-              <strong>مديرة المدرسة</strong><br>
-              منال مرسى ابراهيم
+            <p style="margin-top: 8px; font-size: 0.95em; line-height: 1.6;">
+              ${escapeHtml(s.name)} إحدى مدارس ${escapeHtml(s.department)} التابعة لـ${escapeHtml(s.ministry)}.
             </p>
+            <div style="text-align: center; margin-top: 6px; font-size: 1em; line-height: 1;">
+              <strong>وكيلة المدرسة:</strong><br>
+              هدى ابوزيد هجرس<br><br>
+              <strong>مديرة المدرسة:</strong><br>
+              منال مرسى ابراهيم
+            </div>
           </div>
           <div>
             <h4>تواصل معنا</h4>
