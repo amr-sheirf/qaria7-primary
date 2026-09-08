@@ -96,10 +96,17 @@ function renderFooter() {
             </div>
           </div>
         </div>
-        <div class="footer-bottom">
-          © <span id="yearNow"></span> ${escapeHtml(s.name)} — جميع الحقوق محفوظة
+       <div class="footer-bottom">
+          <div style="margin-bottom: 10px;">
+            © <span id="yearNow"></span> ${escapeHtml(s.name)} — جميع الحقوق محفوظة
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9em; color: #ccc;">
+            <span>تصميم مستر عمرو شريف</span>
+            <span>|</span>
+            <span dir="ltr">📞 01008560950</span>
+            <img src="assets/img/amr-logo.png" style="height: 25px; width: auto; border-radius: 4px;">
+          </div>
         </div>
-      </div>
     </footer>
   `;
   document.getElementById("yearNow").textContent = new Date().getFullYear();
