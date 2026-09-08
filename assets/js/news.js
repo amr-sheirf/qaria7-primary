@@ -1,4 +1,4 @@
-/* تحميل وعرض الأخبار على الصفحة الرئيسية بنظام "البلوجات" */
+/* تحميل وعرض الأخبار على الصفحة الرئيسية بنظام "الفلوج والمدونات" */
 
 function parseFlexibleDate(value) {
   if (!value) return null;
@@ -69,9 +69,15 @@ async function loadNews() {
 
     if (stateEl) stateEl.innerHTML = "";
 
-    const [first, ...rest] = items;
-    if (featureEl) featureEl.innerHTML = renderFeature(first);
-    if (gridEl) gridEl.innerHTML = rest.map(renderCard).join("");
+    // عرض جميع الأخبار بنمط التدوينة / الفلوج الكامل
+    const newsHTML = items.map(renderVlogPost).join("");
+
+    if (featureEl) {
+      featureEl.innerHTML = newsHTML;
+      if (gridEl) gridEl.innerHTML = "";
+    } else if (gridEl) {
+      gridEl.innerHTML = newsHTML;
+    }
 
   } catch (err) {
     console.error("خطأ أثناء تحميل الأخبار:", err);
@@ -84,38 +90,47 @@ async function loadNews() {
   }
 }
 
-function renderFeature(item) {
+/* تصميم الخبر بنظام الفلوج (عنوان -> تاريخ -> صورة -> تفاصيل النص) */
+function renderVlogPost(item) {
   const title = readField(item, "العنوان", "Title");
   const image = readField(item, "الصورة", "Image");
-  const summary = readField(item, "الملخص", "الوصف", "Summary");
+  const details = readField(item, "التفاصيل", "Details", "الملخص", "Summary", "الوصف");
   const date = readField(item, "التاريخ", "Date");
 
-  return `
-    <article class="news-feature">
-      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy">` : ""}
-      <div class="body">
-        ${date ? `<div class="date">${escapeHtml(date)}</div>` : ""}
-        <h3 style="font-size:1.4rem;">${escapeHtml(title)}</h3>
-        <p>${escapeHtml(summary)}</p>
-      </div>
-    </article>
-  `;
-}
-
-function renderCard(item) {
-  const title = readField(item, "العنوان", "Title");
-  const image = readField(item, "الصورة", "Image");
-  const summary = readField(item, "الملخص", "الوصف", "Summary");
-  const date = readField(item, "التاريخ", "Date");
+  // تقسيم الأسطر الجديدة لفقرات منسقة
+  const formattedDetails = escapeHtml(details)
+    .split('\n')
+    .filter(p => p.trim() !== "")
+    .map(p => `<p style="margin-bottom: 12px; font-size: 1.05rem; line-height: 1.8; color: #333;">${p}</p>`)
+    .join("");
 
   return `
-    <article class="news-card">
-      ${image ? `<img class="thumb" src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy">` : `<div class="thumb"></div>`}
-      <div class="body">
-        ${date ? `<div class="date">${escapeHtml(date)}</div>` : ""}
-        <h3>${escapeHtml(title)}</h3>
-        <p>${escapeHtml(summary)}</p>
+    <article class="vlog-post" style="background: #ffffff; border-radius: 12px; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e9ecef;">
+      
+      <!-- 1. العنوان -->
+      <h2 style="color: #0d6efd; font-size: 1.6rem; font-weight: 700; margin-bottom: 8px;">
+        ${escapeHtml(title)}
+      </h2>
+
+      <!-- 2. التاريخ -->
+      ${date ? `
+        <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 16px;">
+          📅 <span>${escapeHtml(date)}</span>
+        </div>
+      ` : ""}
+
+      <!-- 3. الصورة -->
+      ${image ? `
+        <div style="margin-bottom: 20px; text-align: center; overflow: hidden; border-radius: 8px;">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="max-width: 100%; height: auto; max-height: 480px; object-fit: cover; border-radius: 8px;">
+        </div>
+      ` : ""}
+
+      <!-- 4. التفاصيل والنص -->
+      <div class="vlog-body">
+        ${formattedDetails}
       </div>
+
     </article>
   `;
 }
