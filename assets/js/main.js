@@ -74,10 +74,7 @@ function renderFooter() {
         <div class="footer-grid">
           <div>
             <h4>عن المدرسة</h4>
-            <p style="margin-top: 8px; font-size: 0.95em; line-height: 1.8;">
-              <strong>مديرة المدرسة:</strong> منال مرسى<br>
-              <strong>وكيلة المدرسة:</strong> هدى أبوزيد
-            </p>
+            <p>${escapeHtml(s.name)} إحدى مدارس ${escapeHtml(s.department)} التابعة لـ${escapeHtml(s.ministry)}، وتقدّم بوابتها الإلكترونية خدماتها لأولياء الأمور والطلاب بشكل مباشر.</p>
           </div>
           <div>
             <h4>تواصل معنا</h4>
