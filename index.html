@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مدرسة قرية 7 الابتدائية | الرئيسية والأخبار</title>
+<meta name="description" content="البوابة الإلكترونية لمدرسة قرية 7 الابتدائية - إدارة الحامول التعليمية - مديرية التربية والتعليم بكفر الشيخ">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">إدارة الحامول التعليمية</p>
+    <h2>بوابة مدرسة قرية 7 الابتدائية تجمع كل ما يخص طلابنا في مكان واحد</h2>
+    <p class="lead">تابعوا آخر أخبار المدرسة، اطّلعوا على نتائج أبنائكم وحالات الغياب، وأرسلوا طلباتكم واستفساراتكم مباشرة لإدارة المدرسة.</p>
+    <div class="hero-actions">
+      <a href="results.html" class="btn btn-gold">نتائج الطلاب</a>
+      <a href="requests.html" class="btn btn-outline" style="border-color:var(--gold-500);color:var(--gold-200);">تقديم طلب أو شكوى</a>
+    </div>
+  </div>
+</section>
+
+<section class="section stats-section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>أرقام من المدرسة</h2>
+        <p class="sub">بيانات تعريفية محدثة من لوحة إدارة الصفحة</p>
+      </div>
+    </div>
+    <div class="stats-grid" id="schoolStats">
+      <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-number">—</div><div class="stat-label">عدد الطلاب</div></div>
+      <div class="stat-card"><div class="stat-icon">👨‍🏫</div><div class="stat-number">—</div><div class="stat-label">عدد المعلمين</div></div>
+      <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-number">—</div><div class="stat-label">عدد الفصول</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>آخر أخبار المدرسة</h2>
+        <p class="sub">فعاليات، إعلانات، ومستجدات المدرسة أولًا بأول</p>
+      </div>
+    </div>
+
+    <div id="newsState"></div>
+    <div id="newsFeature"></div>
+    <div class="news-grid" id="newsGrid"></div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>خدمات إلكترونية سريعة</h2>
+        <p class="sub">كل ما يحتاجه ولي الأمر في أربع خطوات</p>
+      </div>
+    </div>
+    <div class="info-grid">
+      <a class="info-card" href="results.html">
+        <div class="num">&#128221;</div>
+        <div class="label">استعلام عن نتيجة الطالب</div>
+      </a>
+      <a class="info-card" href="absence.html">
+        <div class="num">&#128197;</div>
+        <div class="label">متابعة غياب الطالب</div>
+      </a>
+      <a class="info-card" href="requests.html">
+        <div class="num">&#9993;</div>
+        <div class="label">تقديم طلب / شكوى / مقترح</div>
+      </a>
+      <a class="info-card" href="gallery.html">
+        <div class="num">&#128247;</div>
+        <div class="label">معرض صور المدرسة</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/news.js"></script>
+<script>
+  renderHeader("index");
+  renderFooter();
+  loadStats();
+  loadNews();
+</script>
+</body>
+</html>

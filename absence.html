@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>غياب الطلاب | مدرسة قرية 7 الابتدائية</title>
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>متابعة غياب الطلاب</h2>
+        <p class="sub">حدد الصف الدراسي واسم الطالب لعرض أيام الغياب المسجّلة</p>
+      </div>
+    </div>
+
+    <div class="search-card">
+      <div class="field-row">
+        <div class="field">
+          <label for="gradeSelect">الصف الدراسي</label>
+          <select id="gradeSelect">
+            <option value="">جارٍ التحميل ...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="studentName">اسم الطالب</label>
+          <input type="text" id="studentName" placeholder="اكتب اسم الطالب">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="absenceBtn">عرض الغياب</button>
+    </div>
+
+    <div id="absenceState"></div>
+    <div id="absenceOutput"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/absence.js"></script>
+<script>
+  renderHeader("absence");
+  renderFooter();
+  initAbsencePage();
+</script>
+</body>
+</html>

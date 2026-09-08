@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة الصفحة | مدرسة قرية 7 الابتدائية</title>
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="section">
+  <div class="container">
+
+    <div class="admin-lock" id="adminLock">
+      <div class="icon">&#128274;</div>
+      <h2>دخول لوحة التحكم</h2>
+      <p class="muted">هذه الصفحة مخصّصة لإدارة المدرسة فقط</p>
+      <div class="field" style="text-align:right;">
+        <label for="adminPass">كلمة المرور</label>
+        <input type="password" id="adminPass" placeholder="أدخل كلمة المرور">
+      </div>
+      <button class="btn btn-primary btn-block" id="adminLoginBtn">دخول</button>
+      <div id="adminLoginState"></div>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+
+      <div class="admin-topbar">
+        <div>
+          <h2 class="mt-0">لوحة تحكم المدرسة</h2>
+          <p class="muted mt-0">إضافة الأخبار وصور المعرض، ومتابعة طلبات أولياء الأمور</p>
+        </div>
+        <button class="btn btn-outline" id="adminLogoutBtn">تسجيل الخروج</button>
+      </div>
+
+      <div class="alert-box" style="margin-bottom:24px;">
+        لإدخال أو تعديل <strong>نتائج الطلاب</strong> و<strong>سجلات الغياب</strong>، يتم ذلك مباشرة عبر استيراد ملف
+        الإكسل داخل جوجل شيت الخاص بالمدرسة. اضغط الزر أدناه لفتح ملف البيانات.
+        <div style="margin-top:12px;">
+          <a class="btn btn-gold" id="openSheetBtn" href="#" target="_blank" rel="noopener">فتح ملف بيانات المدرسة (جوجل شيت)</a>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="news">إضافة خبر</button>
+        <button class="tab-btn" data-tab="gallery">إضافة صورة للمعرض</button>
+        <button class="tab-btn" data-tab="stats">إحصائيات الصفحة</button>
+        <button class="tab-btn" data-tab="requests">طلبات أولياء الأمور</button>
+      </div>
+
+      <!-- تبويب: إضافة خبر -->
+      <div class="tab-panel active" id="tab-news">
+        <div class="search-card" style="max-width:100%;">
+          <div class="field">
+            <label for="newsTitle">عنوان الخبر *</label>
+            <input type="text" id="newsTitle">
+          </div>
+          <div class="field">
+            <label for="newsImage">رابط صورة الخبر</label>
+            <input type="url" id="newsImage" placeholder="https://...">
+          </div>
+          <div class="field">
+            <label for="newsSummary">نص الخبر *</label>
+            <textarea id="newsSummary"></textarea>
+          </div>
+          <button class="btn btn-primary" id="newsSubmitBtn">نشر الخبر</button>
+          <div id="newsAdminState" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <!-- تبويب: إضافة صورة -->
+      <div class="tab-panel" id="tab-gallery">
+        <div class="search-card" style="max-width:100%;">
+          <div class="field">
+            <label for="galImage">رابط الصورة *</label>
+            <input type="url" id="galImage" placeholder="https://...">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="galCaption">وصف الصورة</label>
+              <input type="text" id="galCaption">
+            </div>
+            <div class="field">
+              <label for="galCategory">التصنيف</label>
+              <input type="text" id="galCategory" placeholder="مثال: حفلات">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="gallerySubmitBtn">إضافة الصورة</button>
+          <div id="galleryAdminState" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <!-- تبويب: إحصائيات الصفحة -->
+      <div class="tab-panel" id="tab-stats">
+        <div class="search-card" style="max-width:100%;">
+          <h3>بيانات الصفحة الرئيسية</h3>
+          <p class="muted">عدّل الأرقام التالية لتظهر مباشرة في الصفحة الرئيسية.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="statStudents">عدد الطلاب</label>
+              <input type="number" id="statStudents" min="0" step="1" placeholder="مثال: 420">
+            </div>
+            <div class="field">
+              <label for="statTeachers">عدد المعلمين</label>
+              <input type="number" id="statTeachers" min="0" step="1" placeholder="مثال: 32">
+            </div>
+            <div class="field">
+              <label for="statClasses">عدد الفصول</label>
+              <input type="number" id="statClasses" min="0" step="1" placeholder="مثال: 18">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="statsSubmitBtn">حفظ الإحصائيات</button>
+          <div id="statsAdminState" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <!-- تبويب: الطلبات -->
+      <div class="tab-panel" id="tab-requests">
+        <button class="btn btn-outline" id="refreshRequestsBtn" style="margin-bottom:16px;">تحديث القائمة</button>
+        <div id="requestsAdminState"></div>
+        <div class="table-wrap">
+          <table class="data-table" id="requestsTable" style="display:none;">
+            <thead>
+              <tr>
+                <th>التاريخ</th><th>الاسم</th><th>التليفون</th><th>العنوان</th>
+                <th>النوع</th><th>النص</th><th>الحالة</th><th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/admin.js"></script>
+<script>
+  renderHeader("admin");
+  renderFooter();
+  initAdminPage();
+</script>
+</body>
+</html>

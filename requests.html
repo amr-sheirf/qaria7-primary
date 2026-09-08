@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلبات وشكاوى أولياء الأمور | مدرسة قرية 7 الابتدائية</title>
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>طلبات أولياء الأمور والشكاوى والمقترحات</h2>
+        <p class="sub">تصل رسالتكم مباشرة إلى إدارة المدرسة</p>
+      </div>
+    </div>
+
+    <form class="search-card" id="requestForm">
+      <div class="field-row">
+        <div class="field">
+          <label for="reqName">اسم مقدّم الطلب *</label>
+          <input type="text" id="reqName" required>
+        </div>
+        <div class="field">
+          <label for="reqPhone">رقم التليفون *</label>
+          <input type="tel" id="reqPhone" required inputmode="tel" pattern="[0-9+ ]{8,}">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="reqAddress">العنوان</label>
+        <input type="text" id="reqAddress">
+      </div>
+
+      <div class="field">
+        <label for="reqType">نوع الطلب</label>
+        <select id="reqType">
+          <option value="طلب">طلب</option>
+          <option value="شكوى">شكوى</option>
+          <option value="مقترح">مقترح</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="reqMessage">نص الطلب أو الشكوى *</label>
+        <textarea id="reqMessage" required placeholder="اكتب تفاصيل طلبك أو شكواك أو مقترحك هنا ..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="reqSubmitBtn">إرسال إلى إدارة المدرسة</button>
+      <div id="reqState" style="margin-top:14px;"></div>
+    </form>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/requests.js"></script>
+<script>
+  renderHeader("requests");
+  renderFooter();
+  initRequestsPage();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتائج الطلاب | مدرسة قرية 7 الابتدائية</title>
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>الاستعلام عن نتيجة الطالب</h2>
+        <p class="sub">ابحث برقم جلوس الطالب أو باسمه لعرض الدرجات</p>
+      </div>
+    </div>
+
+    <div class="search-card">
+      <div class="field-row">
+        <div class="field" style="flex:1;">
+          <label for="searchType">البحث بواسطة</label>
+          <select id="searchType">
+            <option value="seat">رقم الجلوس</option>
+            <option value="name">اسم الطالب</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="searchValue" id="searchLabel">أدخل رقم الجلوس</label>
+        <input type="text" id="searchValue" placeholder="مثال: 1023" inputmode="numeric">
+      </div>
+      <button class="btn btn-primary btn-block" id="searchBtn">بحث عن النتيجة</button>
+    </div>
+
+    <div id="resultsState"></div>
+    <div id="resultsOutput"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/results.js"></script>
+<script>
+  renderHeader("results");
+  renderFooter();
+  initResultsPage();
+</script>
+</body>
+</html>
