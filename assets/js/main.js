@@ -114,6 +114,9 @@ async function fetchSheetCSV(url) {
   if (!url || url.startsWith("PASTE_")) {
     throw new Error("CONFIG_NOT_SET");
   }
+   // تحويل البيانات المستلمة صراحة إلى UTF-8 لمعالجة النصوص العربية
+  const decoder = new TextDecoder('utf-8');
+  const csvText = decoder.decode(buffer);
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("HTTP_" + res.status);
   const text = await res.text();
