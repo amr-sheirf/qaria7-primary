@@ -1,15 +1,15 @@
-/* PDF search helper - Search for case files (صحف الحالة) by case code
+/* PDF search helper - Search for case files (صحف الحالة) by teacher code
    Expected HTML IDs to be added in the page where you want the UI:
      - pdfState (optional)
      - pdfSearchContainer (container where input+button will be injected)
      - pdfResult (area to show notes/result)
 
-   Behavior: when user enters a case code and clicks "بحث" (or presses Enter), this script
-   searches the local PDF files in assets/PDFs/ folder and opens the matching PDF directly.
+   Behavior: when user enters a teacher code and clicks "بحث" (or presses Enter), this script
+   searches for the matching PDF file in assets/PDFs/ folder using the teacher code (which matches the filename).
 */
 
 const PDF_CONFIG = {
-  mode: 'local_files', // 'local_files' or 'drive_search'
+  mode: 'local_files', // Search in local files using teacher code
   DRIVE_SEARCH_BASE: 'https://drive.google.com/drive/u/0/search?q=',
   PDF_FILES: [
     '1172140', '1173905', '1175595', '1177976', '1193242',
@@ -32,7 +32,7 @@ function initGalleryPage() {
 
   container.innerHTML = `
     <div class="pdf-search-row">
-      <input id="pdfCodeInput" class="pdf-input" type="text" placeholder="أدخل رمز الحالة" aria-label="رمز الحالة">
+      <input id="pdfCodeInput" class="pdf-input" type="text" placeholder="أدخل كود المعلم" aria-label="كود المعلم">
       <button id="pdfSearchBtn" class="pdf-btn">بحث</button>
     </div>
   `;
@@ -47,25 +47,25 @@ function initGalleryPage() {
   input.addEventListener('keyup', e => { if (e.key === 'Enter') handleSearch((input && input.value || '').trim()); });
 }
 
-function handleSearch(code) {
+function handleSearch(teacherCode) {
   const resultEl = document.getElementById('pdfResult');
   if (!resultEl) return;
 
-  if (!code) {
-    resultEl.innerHTML = `<div class="pdf-note">الرجاء إدخال رمز الحالة ثم الضغط على &quot;بحث&quot;.</div>`;
+  if (!teacherCode) {
+    resultEl.innerHTML = `<div class="pdf-note">الرجاء إدخال كود المعلم ثم الضغط على &quot;بحث&quot;.</div>`;
     return;
   }
 
-  // Check if the code exists in our local PDF files
-  if (PDF_CONFIG.PDF_FILES.includes(code)) {
-    const pdfUrl = `assets/PDFs/${code}.pdf`;
+  // Check if the teacher code exists in our local PDF files
+  if (PDF_CONFIG.PDF_FILES.includes(teacherCode)) {
+    const pdfUrl = `assets/PDFs/${teacherCode}.pdf`;
     window.open(pdfUrl, '_blank');
-    resultEl.innerHTML = `<div class="pdf-note">✓ تم فتح صحيفة الحالة برمز <strong>${escapeHtmlSafe(code)}</strong> في تبويب جديد.</div>`;
+    resultEl.innerHTML = `<div class="pdf-note">✓ تم فتح صحيفة المعلم برقم <strong>${escapeHtmlSafe(teacherCode)}</strong> في تبويب جديد.</div>`;
     return;
   }
 
   // If not found in local files, show error
-  resultEl.innerHTML = `<div class="pdf-note error">✗ لم يتم العثور على صحيفة حالة برمز <strong>&quot;${escapeHtmlSafe(code)}&quot;</strong>. يرجى التحقق من الرمز.</div>`;
+  resultEl.innerHTML = `<div class="pdf-note error">✗ لم يتم العثور على صحيفة معلم برقم <strong>&quot;${escapeHtmlSafe(teacherCode)}&quot;</strong>. يرجى التحقق من الرقم.</div>`;
 }
 
 // Helper to escape HTML if escapeHtml is not available in the project
