@@ -6,17 +6,17 @@ function parseFlexibleDate(value) {
   return isNaN(d.getTime()) ? null : d;
 }
 
-// دالة آمنة لمعالجة وتحديد الترميز بدون إيقاف السكريبت
+// دالة لمعالجة وتصحيح ترميز اللغة العربية المكسور
 function fixEncoding(str) {
-  if (typeof str !== 'string') return str || '';
+  if (typeof str !== 'string' || !str) return str || '';
   try {
     return decodeURIComponent(escape(str));
   } catch (e) {
-    // في حال فشل فك الترميز يتم إرجاع النص كما هو بدون إطلاق استثناء
     return str;
   }
 }
 
+// دالة لتنظيف مفاتيح وقيم الكائن القادم من fetchSheetCSV
 function normalizeItem(rawItem) {
   const cleanObj = {};
   if (!rawItem || typeof rawItem !== 'object') return cleanObj;
@@ -39,27 +39,22 @@ async function loadNews() {
   if (stateEl) setState(stateEl, "loading", "جارٍ تحميل الأخبار ...");
 
   try {
-    // جلب البيانات مع التحقق من الرابط
-    if (!CONFIG || !CONFIG.SHEETS_CSV || !CONFIG.SHEETS_CSV.NEWS) {
-      throw new Error("CONFIG_NOT_SET");
-    }
-
     let rawItems = await fetchSheetCSV(CONFIG.SHEETS_CSV.NEWS);
 
     if (!Array.isArray(rawItems)) {
       rawItems = [];
     }
 
-    // تنظيف المفاتيح والقيم
+    // إصلاح التشفير وتنظيف بيانات الأخبار
     let items = rawItems.map(normalizeItem);
 
-    // تصفية العناصر التي تحتوي على عنوان فقط
+    // استبعاد الصفوف الفارغة أو التي لا تحتوي على عنوان
     items = items.filter(i => {
       const title = readField(i, "العنوان", "Title");
       return title && String(title).trim() !== "";
     });
 
-    // الترتيب بحسب التاريخ إن وجد
+    // ترتيب الأخبار بحسب التاريخ (الأحدث أولًا)
     items.sort((a, b) => {
       const da = parseFlexibleDate(readField(a, "التاريخ", "Date"));
       const db = parseFlexibleDate(readField(b, "التاريخ", "Date"));
@@ -79,7 +74,7 @@ async function loadNews() {
     if (gridEl) gridEl.innerHTML = rest.map(renderCard).join("");
 
   } catch (err) {
-    console.error("تفاصيل الخطأ في الأخبار:", err); // يظهر الخطأ الحقيقي في Developer Tools
+    console.error("خطأ أثناء تحميل الأخبار:", err);
 
     if (err.message === "CONFIG_NOT_SET") {
       if (stateEl) setState(stateEl, "error", "لم يتم ربط شيت الأخبار بعد. الرجاء إضافة الرابط في ملف assets/js/config.js.");
