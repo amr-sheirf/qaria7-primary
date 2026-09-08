@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { id: "results",  label: "نتائج الطلاب",      href: "results.html" },
   { id: "absence",  label: "غياب الطلاب",        href: "absence.html" },
   { id: "requests", label: "الشكاوى والمقترحات", href: "requests.html" },
-  { id: "gallery",  label: "معرض الصور",         href: "gallery.html" },
+  { id: "gallery",  label: "طباعة صحيفة المعلم",         href: "gallery.html" },
   { id: "admin",    label: "إدارة الصفحة",       href: "admin.html" }
 ];
 
