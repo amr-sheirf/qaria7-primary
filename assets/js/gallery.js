@@ -1,22 +1,25 @@
-/* PDF search helper - open Google Drive search for a given code (no iframe)
+/* PDF search helper - Search for case files (صحف الحالة) by case code
    Expected HTML IDs to be added in the page where you want the UI:
      - pdfState (optional)
      - pdfSearchContainer (container where input+button will be injected)
      - pdfResult (area to show notes/result)
 
-   Behavior: when user enters a code and clicks "بحث" (or presses Enter), this script
-   opens a new tab with Google Drive search results for that code. If you later prefer
-   direct opening of files, provide a mapping between codes and direct file links and
-   switch PDF_CONFIG.mode to 'map'.
+   Behavior: when user enters a case code and clicks "بحث" (or presses Enter), this script
+   searches the local PDF files in assets/PDFs/ folder and opens the matching PDF directly.
 */
 
 const PDF_CONFIG = {
-  mode: 'drive_search', // 'drive_search' or 'map'
-  DRIVE_FOLDER_ID: '1JV4_EtITiYV7QBQWe3hWUjc4jFJ5YAcb', // your shared folder ID (for reference)
+  mode: 'local_files', // 'local_files' or 'drive_search'
   DRIVE_SEARCH_BASE: 'https://drive.google.com/drive/u/0/search?q=',
-  PDF_MAP: {
-    // Example mapping (optional): '12345': 'https://drive.google.com/uc?export=download&id=FILE_ID'
-  }
+  PDF_FILES: [
+    '1172140', '1173905', '1175595', '1177976', '1193242',
+    '2171764', '2201077', '2202903', '2211277', '2216641',
+    '2814884', '2815347', '2817449', '2818229', '2818265',
+    '2820829', '2825423', '2829881', '2911348', '2926233',
+    '2926355', '2927030', '2927458', '2932391', '2932506',
+    '2932509', '2932515', '2932516', '3026925', '3079691',
+    '3091188', '3105319', '3480610', '3695674'
+  ]
 };
 
 function initGalleryPage() {
@@ -29,7 +32,7 @@ function initGalleryPage() {
 
   container.innerHTML = `
     <div class="pdf-search-row">
-      <input id="pdfCodeInput" class="pdf-input" type="text" placeholder="أدخل الكود هنا" aria-label="كود">
+      <input id="pdfCodeInput" class="pdf-input" type="text" placeholder="أدخل رمز الحالة" aria-label="رمز الحالة">
       <button id="pdfSearchBtn" class="pdf-btn">بحث</button>
     </div>
   `;
@@ -49,29 +52,20 @@ function handleSearch(code) {
   if (!resultEl) return;
 
   if (!code) {
-    resultEl.innerHTML = `<div class="pdf-note">الرجاء إدخال الكود ثم الضغط على &quot;بحث&quot;.</div>`;
+    resultEl.innerHTML = `<div class="pdf-note">الرجاء إدخال رمز الحالة ثم الضغط على &quot;بحث&quot;.</div>`;
     return;
   }
 
-  // If using mapping mode, prefer direct URL from map
-  if (PDF_CONFIG.mode === 'map') {
-    const url = PDF_CONFIG.PDF_MAP[code] || null;
-    if (!url) {
-      resultEl.innerHTML = `<div class="pdf-note">لم يتم العثور على ملف مطابق للكود "${escapeHtmlSafe(code)}" في الخريطة.</div>`;
-      return;
-    }
-    // Open the direct file URL in a new tab
-    window.open(url, '_blank');
-    resultEl.innerHTML = `<div class="pdf-note">تم فتح الملف المرتبط بالكود ${escapeHtmlSafe(code)} في تبويب جديد.</div>`;
+  // Check if the code exists in our local PDF files
+  if (PDF_CONFIG.PDF_FILES.includes(code)) {
+    const pdfUrl = `assets/PDFs/${code}.pdf`;
+    window.open(pdfUrl, '_blank');
+    resultEl.innerHTML = `<div class="pdf-note">✓ تم فتح صحيفة الحالة برمز <strong>${escapeHtmlSafe(code)}</strong> في تبويب جديد.</div>`;
     return;
   }
 
-  // Default: open Google Drive search for the code. This will show results in Drive UI.
-  const query = encodeURIComponent(code);
-  const searchUrl = PDF_CONFIG.DRIVE_SEARCH_BASE + query;
-  window.open(searchUrl, '_blank');
-
-  resultEl.innerHTML = `<div class="pdf-note">يتم البحث عن "${escapeHtmlSafe(code)}" في Google Drive (نافذة جديدة).</div>`;
+  // If not found in local files, show error
+  resultEl.innerHTML = `<div class="pdf-note error">✗ لم يتم العثور على صحيفة حالة برمز <strong>&quot;${escapeHtmlSafe(code)}&quot;</strong>. يرجى التحقق من الرمز.</div>`;
 }
 
 // Helper to escape HTML if escapeHtml is not available in the project
