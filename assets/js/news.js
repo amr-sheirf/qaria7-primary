@@ -46,6 +46,14 @@ function normalizeItem(rawItem) {
   return cleanObj;
 }
 
+// دالة لتحويل الروابط في النص إلى روابط قابلة للنقر
+function convertUrlsToLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/gi;
+  return text.replace(urlRegex, (url) => {
+    return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" style="color:#0d6efd; text-decoration:underline; cursor:pointer;">${escapeHtml(url)}</a>`;
+  });
+}
+
 // مصفوفة عامة لحفظ الأخبار لفتحها عند الضغط على البطاقة
 window.allNewsItems = [];
 
@@ -112,7 +120,7 @@ function renderNewsCard(item, index) {
 
   return `
     <article class="news-card" style="background:#fff; border-radius:10px; border:1px solid #e0e0e0; overflow:hidden; display:flex; flex-direction:column; margin-bottom:20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : `<div style="height:120px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#aaa;">صورة غير متاحة</div>`}
+      ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">` : `<div style="height:120px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#999;"><span style="font-size:3rem;">📰</span></div>`}
       
       <div style="padding:15px; display:flex; flex-direction:column; flex-grow:1;">
         ${date ? `<span style="font-size:0.8rem; color:#6c757d; margin-bottom:6px;">📅 ${escapeHtml(date)}</span>` : ""}
@@ -132,7 +140,7 @@ function injectNewsModal() {
 
   const modalHTML = `
     <div id="newsModalOverlay" onclick="closeNewsModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center;">
-      <div style="background:#fff; width:100%; max-width:650px; max-height:85vh; border-radius:12px; overflow-y:auto; position:relative; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); text-align:right;">
+      <div id="newsModalContent" onclick="event.stopPropagation()" style="background:#fff; width:100%; max-width:650px; max-height:85vh; border-radius:12px; overflow-y:auto; position:relative; padding:25px; box-shadow:0 10px 25px rgba(0,0,0,0.2); text-align:right; direction:rtl;">
         
         <button onclick="closeNewsModal()" style="position:absolute; top:12px; left:15px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:#777;">&times;</button>
         
@@ -141,7 +149,7 @@ function injectNewsModal() {
         
         <div id="modalNewsImageContainer" style="margin-bottom:15px; text-align:center;"></div>
         
-        <div id="modalNewsBody" style="line-height:1.8; color:#333; font-size:1rem; white-space:pre-line;"></div>
+        <div id="modalNewsBody" style="line-height:1.8; color:#333; font-size:1rem; word-wrap:break-word; overflow-wrap:break-word;"></div>
         
         <div style="margin-top:20px; text-align:left;">
           <button onclick="closeNewsModal()" style="background:#6c757d; color:#fff; border:none; padding:7px 18px; border-radius:6px; cursor:pointer;">إغلاق</button>
@@ -179,8 +187,9 @@ window.openNewsModal = function(index) {
   document.getElementById("modalNewsTitle").textContent = title;
   document.getElementById("modalNewsDate").textContent = readField(item, "التاريخ", "Date") ? `📅 ${readField(item, "التاريخ", "Date")}` : "";
   
-  // تنسيق الأسطر المكسورة وإظهار النص كاملاً
-  const formattedText = escapeHtml(details)
+  // تنسيق الأسطر المكسورة وإظهار النص كاملاً مع تحويل الروابط
+  const textWithLinks = convertUrlsToLinks(escapeHtml(details));
+  const formattedText = textWithLinks
     .split('\n')
     .filter(p => p.trim() !== "")
     .map(p => `<p style="margin-bottom:10px;">${p}</p>`)
@@ -200,6 +209,9 @@ window.openNewsModal = function(index) {
 };
 
 window.closeNewsModal = function(e) {
+  // التحقق من أن الضغط كان على الخلفية فقط وليس على المحتوى
+  if (e && e.target.id !== "newsModalOverlay") return;
+  
   const overlay = document.getElementById("newsModalOverlay");
   if (overlay) overlay.style.display = "none";
 };
