@@ -23,6 +23,7 @@ function initAdminPage() {
   document.getElementById("newsSubmitBtn").addEventListener("click", submitNews);
   document.getElementById("gallerySubmitBtn").addEventListener("click", submitGalleryImage);
   document.getElementById("statsSubmitBtn").addEventListener("click", submitStats);
+  document.getElementById("termSubmitBtn").addEventListener("click", submitTerm);
   document.getElementById("refreshRequestsBtn").addEventListener("click", loadRequests);
 
   // تسهيل الدخول المتكرر أثناء نفس الجلسة فقط (لا يُخزَّن بشكل دائم)
@@ -56,6 +57,7 @@ function unlockAdmin() {
   document.getElementById("adminPanel").classList.add("open");
   loadRequests();
   loadStatsForAdmin();
+  loadTermForAdmin();
 }
 
 function switchTab(tab) {
@@ -166,6 +168,36 @@ async function submitStats() {
     });
     if (res.ok) setState(stateEl, "info", "تم حفظ الإحصائيات بنجاح.");
     else setState(stateEl, "error", res.message || "تعذّر حفظ الإحصائيات.");
+  } catch (err) {
+    setState(stateEl, "error", appsScriptErrorMessage(err));
+  }
+}
+
+/* ---------------- الفصل الدراسي للنتيجة ---------------- */
+async function loadTermForAdmin() {
+  const stateEl = document.getElementById("termAdminState");
+  try {
+    const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=term`, { cache: "no-store" });
+    const data = await res.json();
+    if (!data.ok) return;
+    document.getElementById("termSelect").value = data.term || "1";
+  } catch (err) {
+    if (stateEl) setState(stateEl, "error", "تعذّر تحميل الفصل الدراسي الحالي.");
+  }
+}
+
+async function submitTerm() {
+  const stateEl = document.getElementById("termAdminState");
+  const term = document.getElementById("termSelect").value;
+  setState(stateEl, "loading", "جارٍ حفظ الفصل الدراسي ...");
+  try {
+    const res = await postToAppsScript({
+      action: "updateTerm",
+      password: ADMIN_PASSWORD_CACHE,
+      term
+    });
+    if (res.ok) setState(stateEl, "info", "تم حفظ الفصل الدراسي بنجاح. سيظهر تلقائيًا في صفحة النتائج والشهادة.");
+    else setState(stateEl, "error", res.message || "تعذّر حفظ الفصل الدراسي.");
   } catch (err) {
     setState(stateEl, "error", appsScriptErrorMessage(err));
   }
