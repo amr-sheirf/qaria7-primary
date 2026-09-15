@@ -452,6 +452,43 @@ table.grades-table tfoot td:last-child{border-radius:0 var(--radius-sm) var(--ra
 
 .certificate-btn{margin-top:20px;}
 
+.search-input-wrap{position:relative;}
+.suggestions-box{
+  display:none;
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  left:0;
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-soft);
+  max-height:280px;
+  overflow-y:auto;
+  z-index:30;
+}
+.suggestion-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:11px 16px;
+  background:none;
+  border:0;
+  border-bottom:1px solid var(--line);
+  text-align:right;
+  font-family:inherit;
+  cursor:pointer;
+  font-size:.95rem;
+  color:var(--ink-900);
+  transition:background .12s;
+}
+.suggestion-item:last-child{border-bottom:0;}
+.suggestion-item:hover, .suggestion-item:focus{background:var(--gold-200);outline:none;}
+.suggestion-name{font-weight:700;}
+.suggestion-meta{color:var(--ink-500);font-size:.8rem;white-space:nowrap;flex-shrink:0;}
+
 @media (max-width:520px){
   .result-card{padding:18px 16px;border-radius:var(--radius-md);}
   .result-card-head{gap:12px;margin-bottom:16px;padding-bottom:14px;}
