@@ -400,6 +400,7 @@ table.data-table tfoot td{font-weight:800;background:var(--gold-200);}
   font-size:.9rem;
 }
 .result-card-tags .tag-label{color:var(--ink-500);font-weight:600;}
+.result-card-tags .tag-term{background:var(--blue-800);color:var(--white);}
 
 table.grades-table{
   width:100%;
