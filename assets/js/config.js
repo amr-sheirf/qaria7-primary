@@ -26,7 +26,7 @@ const CONFIG = {
   },
 
   /* رابط تطبيق ويب Google Apps Script (Code.gs) */
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwsJe-9ZhPAvWLI3qMCA5kkDG4UcvdL6kyFa73ONK6qnBqfRBIqf_3WDjOm4C9lLekj2A/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyWBx7JiB75_RUzofviofRr3gSD7ML_mG51umqTb6nikEuGkn7hYzwcdPNvzgA_FEOw/exec",
 
   /* رابط ملف جوجل شيت المباشر (وضع التعديل) */
   SPREADSHEET_EDIT_URL: "https://docs.google.com/spreadsheets/d/1GZ6M7bDi36s4MgdUk26XF1vfU_pOO0YJTMDTE7Ty6rM/edit?gid=625050410#gid=625050410",
