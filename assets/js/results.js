@@ -28,26 +28,102 @@ function initResultsPage() {
   const label = document.getElementById("searchLabel");
   const input = document.getElementById("searchValue");
   const btn = document.getElementById("searchBtn");
+  const suggestBox = document.getElementById("nameSuggestions");
+  let suggestTimer = null;
 
   loadCurrentTerm();
 
   typeSel.addEventListener("change", () => {
+    hideSuggestions();
     if (typeSel.value === "seat") {
       label.textContent = "أدخل رقم الجلوس";
       input.placeholder = "مثال: 1023";
       input.inputMode = "numeric";
     } else {
-      label.textContent = "أدخل اسم الطالب (كل أو جزء من الاسم)";
-      input.placeholder = "مثال: أحمد محمد";
+      label.textContent = "أدخل اسم الطالب (اكتب أول اسم واختر الطالب من القائمة)";
+      input.placeholder = "مثال: أحمد";
       input.inputMode = "text";
     }
   });
 
-  btn.addEventListener("click", runResultsSearch);
-  input.addEventListener("keydown", e => { if (e.key === "Enter") runResultsSearch(); });
+  btn.addEventListener("click", () => { hideSuggestions(); runResultsSearch(); });
+  input.addEventListener("keydown", e => { if (e.key === "Enter") { hideSuggestions(); runResultsSearch(); } });
+
+  input.addEventListener("input", () => {
+    if (typeSel.value !== "name") return;
+    clearTimeout(suggestTimer);
+    const q = input.value.trim();
+    if (q.length < 1) { hideSuggestions(); return; }
+    suggestTimer = setTimeout(() => showNameSuggestions(q), 180);
+  });
+
+  document.addEventListener("click", e => {
+    if (e.target !== input && !suggestBox.contains(e.target)) hideSuggestions();
+  });
+
+  function hideSuggestions() {
+    suggestBox.style.display = "none";
+    suggestBox.innerHTML = "";
+  }
+
+  async function showNameSuggestions(query) {
+    try {
+      await ensureResultsLoaded();
+    } catch (err) {
+      hideSuggestions();
+      return;
+    }
+
+    const nameKeys = ["اسم الطالب", "الاسم", "Name", "StudentName"];
+    const seatKeys = ["رقم الجلوس", "SeatNumber", "Seat"];
+    const clsKeys = ["الصف", "Grade", "Class"];
+    const seen = new Set();
+    const suggestions = [];
+
+    for (const row of RESULTS_CACHE) {
+      const name = readField(row, ...nameKeys);
+      if (!name || !name.trim().startsWith(query)) continue;
+      const seat = readField(row, ...seatKeys);
+      const key = name + "|" + seat;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      suggestions.push({ name, seat, cls: readField(row, ...clsKeys) });
+      if (suggestions.length >= 8) break;
+    }
+
+    if (suggestions.length === 0) { hideSuggestions(); return; }
+
+    suggestBox.innerHTML = suggestions.map(item => {
+      const metaParts = [];
+      if (item.cls) metaParts.push(escapeHtml(item.cls));
+      if (item.seat) metaParts.push(`جلوس ${escapeHtml(item.seat)}`);
+      return `
+        <button type="button" class="suggestion-item" data-name="${escapeHtml(item.name)}">
+          <span class="suggestion-name">${escapeHtml(item.name)}</span>
+          ${metaParts.length ? `<span class="suggestion-meta">${metaParts.join(" • ")}</span>` : ""}
+        </button>
+      `;
+    }).join("");
+    suggestBox.style.display = "block";
+
+    suggestBox.querySelectorAll(".suggestion-item").forEach(el => {
+      el.addEventListener("click", () => {
+        input.value = el.dataset.name;
+        hideSuggestions();
+        runResultsSearch(true);
+      });
+    });
+  }
 }
 
-async function runResultsSearch() {
+/** يحمّل بيانات النتائج مرة واحدة فقط ويحتفظ بها في الذاكرة المؤقتة */
+async function ensureResultsLoaded() {
+  if (!RESULTS_CACHE) {
+    RESULTS_CACHE = await fetchSheetCSV(CONFIG.SHEETS_CSV.RESULTS);
+  }
+}
+
+async function runResultsSearch(exactName = false) {
   const stateEl = document.getElementById("resultsState");
   const outputEl = document.getElementById("resultsOutput");
   const type = document.getElementById("searchType").value;
@@ -64,9 +140,7 @@ async function runResultsSearch() {
 
   try {
     await loadCurrentTerm();
-    if (!RESULTS_CACHE) {
-      RESULTS_CACHE = await fetchSheetCSV(CONFIG.SHEETS_CSV.RESULTS);
-    }
+    await ensureResultsLoaded();
 
     const seatKeys = ["رقم الجلوس", "SeatNumber", "Seat"];
     const nameKeys = ["اسم الطالب", "الاسم", "Name", "StudentName"];
@@ -77,7 +151,8 @@ async function runResultsSearch() {
         return seat && seat === value;
       } else {
         const name = readField(row, ...nameKeys);
-        return name && name.includes(value);
+        if (!name) return false;
+        return exactName ? name.trim() === value : name.trim().startsWith(value);
       }
     });
 
