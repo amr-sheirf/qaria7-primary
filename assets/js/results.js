@@ -58,15 +58,18 @@ function initResultsPage() {
   });
 
   document.addEventListener("click", e => {
+    if (!suggestBox) return;
     if (e.target !== input && !suggestBox.contains(e.target)) hideSuggestions();
   });
 
   function hideSuggestions() {
+    if (!suggestBox) return;
     suggestBox.style.display = "none";
     suggestBox.innerHTML = "";
   }
 
   async function showNameSuggestions(query) {
+    if (!suggestBox) return;
     try {
       await ensureResultsLoaded();
     } catch (err) {
