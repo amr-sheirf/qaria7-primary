@@ -32,7 +32,10 @@
       </div>
       <div class="field">
         <label for="searchValue" id="searchLabel">أدخل رقم الجلوس</label>
-        <input type="text" id="searchValue" placeholder="مثال: 1023" inputmode="numeric">
+        <div class="search-input-wrap">
+          <input type="text" id="searchValue" placeholder="مثال: 1023" inputmode="numeric" autocomplete="off">
+          <div id="nameSuggestions" class="suggestions-box"></div>
+        </div>
       </div>
       <button class="btn btn-primary btn-block" id="searchBtn">بحث عن النتيجة</button>
     </div>
