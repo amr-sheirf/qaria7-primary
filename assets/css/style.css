@@ -358,6 +358,99 @@ table.data-table thead th{
 table.data-table tbody tr:nth-child(even){background:#f7f9fc;}
 table.data-table tfoot td{font-weight:800;background:var(--gold-200);}
 
+/* ---------- كارت نتيجة الطالب (تصميم عصري) ---------- */
+.result-card{
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  padding:26px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-soft);
+  border-top:5px solid var(--gold-600);
+  animation:fadeInUp .35s ease;
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.result-card-head{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:20px;
+  padding-bottom:18px;
+  border-bottom:1px dashed var(--line);
+  flex-wrap:wrap;
+}
+.result-avatar{
+  width:56px;height:56px;flex-shrink:0;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--blue-800), var(--blue-600));
+  color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:900;
+  box-shadow:0 6px 16px rgba(8,40,79,.25);
+}
+.result-card-info h3{margin:0 0 8px;font-size:1.25rem;color:var(--blue-900);}
+.result-card-tags{display:flex;gap:10px;flex-wrap:wrap;}
+.result-card-tags .tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#f1e2b3;
+  color:var(--gold-700);
+  padding:5px 14px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:.9rem;
+}
+.result-card-tags .tag-label{color:var(--ink-500);font-weight:600;}
+
+table.grades-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px;
+}
+table.grades-table thead th{
+  padding:10px 15px;
+  text-align:right;
+  font-size:.9rem;
+  color:var(--ink-500);
+  font-weight:700;
+}
+table.grades-table thead th:last-child{text-align:left;}
+table.grades-table tbody tr{
+  background:#f7f9fc;
+  transition:background .15s, transform .15s;
+}
+table.grades-table tbody tr:hover{background:var(--gold-200);transform:translateX(-2px);}
+table.grades-table td{
+  padding:14px 18px;
+  font-size:1rem;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+table.grades-table tbody tr td:first-child{
+  border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+  border-right:1px solid var(--line);
+  font-weight:700;
+  color:var(--blue-800);
+}
+table.grades-table tbody tr td:last-child{
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  border-left:1px solid var(--line);
+  text-align:left;
+  font-weight:800;
+  color:var(--ink-900);
+  font-family:var(--font-display);
+}
+table.grades-table tfoot td{
+  background:var(--blue-800);
+  color:var(--white);
+  font-weight:900;
+  font-size:1.05rem;
+  padding:15px 18px;
+}
+table.grades-table tfoot td:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm);}
+table.grades-table tfoot td:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0;text-align:left;}
+
+.certificate-btn{margin-top:20px;}
+
 /* ---------- معرض الصور ---------- */
 .gallery-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
 .chip{
