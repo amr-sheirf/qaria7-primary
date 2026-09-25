@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نتائج الطلاب | مدرسة قرية 7 الابتدائية</title>
+<title>الشكاوى والمقترحات | مدرسة قرية 7 الابتدائية</title>
 <link rel="icon" href="assets/img/logo.png">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -15,46 +15,60 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <h2>الاستعلام عن نتيجة الطالب</h2>
-        <p class="sub">ابحث برقم جلوس الطالب أو باسمه لعرض الدرجات</p>
+        <h2>تقديم طلب أو شكوى أو مقترح</h2>
+        <p class="sub">يسعدنا تلقي استفساراتكم وملاحظاتكم للتواصل المباشر مع إدارة المدرسة</p>
       </div>
     </div>
 
-    <div class="search-card">
+    <form id="requestForm" class="search-card">
       <div class="field-row">
-        <div class="field" style="flex:1;">
-          <label for="searchType">البحث بواسطة</label>
-          <select id="searchType">
-            <option value="seat">رقم الجلوس</option>
-            <option value="name">اسم الطالب</option>
+        <div class="field">
+          <label for="reqName">اسم ولي الأمر / مقدم الطلب *</label>
+          <input type="text" id="reqName" required placeholder="مثال: أحمد محمد علي">
+        </div>
+        <div class="field">
+          <label for="reqPhone">رقم الهاتف للتواصل *</label>
+          <input type="tel" id="reqPhone" required placeholder="مثال: 01012345678" dir="ltr" style="text-align:right;">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="reqType">نوع الطلب</label>
+          <select id="reqType">
+            <option value="طلب إداري">طلب إداري</option>
+            <option value="شكوى">شكوى</option>
+            <option value="مقترح">مقترح لتطوير المدرسة</option>
+            <option value="استفسار">استفسار عام</option>
           </select>
         </div>
-      </div>
-      <div class="field">
-        <label for="searchValue" id="searchLabel">أدخل رقم الجلوس</label>
-        <div class="search-input-wrap">
-          <input type="text" id="searchValue" placeholder="مثال: 1023" inputmode="numeric" autocomplete="off">
-          <div id="nameSuggestions" class="suggestions-box"></div>
+        <div class="field">
+          <label for="reqAddress">العنوان أو صلة القرابة بالطالب</label>
+          <input type="text" id="reqAddress" placeholder="مثال: ولي أمر الطالب ... في الصف ...">
         </div>
       </div>
-      <button class="btn btn-primary btn-block" id="searchBtn">بحث عن النتيجة</button>
-    </div>
 
-    <div id="resultsState"></div>
-    <div id="resultsOutput"></div>
+      <div class="field">
+        <label for="reqMessage">تفاصيل الطلب أو الشكوى أو المقترح *</label>
+        <textarea id="reqMessage" required placeholder="اكتب رسالتك أو استفسارك بالتفصيل هنا ..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="reqSubmitBtn">إرسال إلى إدارة المدرسة</button>
+
+      <div id="reqState"></div>
+    </form>
   </div>
 </section>
 
 <div id="site-footer"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/main.js"></script>
-<script src="assets/js/results.js"></script>
+<script src="assets/js/requests.js"></script>
 <script>
-  renderHeader("results");
+  renderHeader("requests");
   renderFooter();
-  initResultsPage();
+  initRequestsPage();
 </script>
 </body>
 </html>
